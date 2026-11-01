@@ -1,0 +1,8 @@
+
+numpy
+netCDF4
+matplotlib
+cartopy
+scipy
+rasterio
+pyproj

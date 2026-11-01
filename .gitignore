@@ -1,0 +1,49 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+*.bak
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Generated scientific data
+*.nc
+*.dat
+*.def
+*.tif
+*.tiff
+*.csv
+*.grd
+*.dep
+
+# Logs and temporary files
+*.log
+*.tmp
+*.aux.xml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# External binaries
+*.dll
+
+# Test artifacts
+tests/grid_diagnostic.png
