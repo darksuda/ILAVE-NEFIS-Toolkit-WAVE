@@ -1,55 +1,66 @@
 # ILAVE NEFIS Toolkit – WAVE MODULE
 
-**ILAVE NEFIS Toolkit – WAVE MODULE** is a Python desktop application designed to process Delft3D-WAVE 4 simulation outputs stored in NEFIS format.
+A Python desktop application for extracting, converting, and processing Delft3D-WAVE 4 simulation results stored in NEFIS format.
 
-It provides a graphical interface to convert, visualize, and extract numerical simulation data into widely used scientific data formats.
+The application provides a graphical user interface (GUI) to convert model outputs into commonly used scientific and geospatial formats, making it easier to analyze, visualize, and process wave model results.
 
 ## Features
 
-### 1. NEFIS to NetCDF
-- Reads Delft3D-WAVE NEFIS `.dat` and `.def` files.
-- Automatically detects spatial grid dimensions.
-- Automatically detects the number of simulation records.
-- Extracts spatial and temporal simulation variables.
-- Preserves simulation calendar dates and timestamps.
-- Supports compressed NetCDF output.
+### 1. NEFIS to NetCDF conversion
+- Reads Delft3D-WAVE 4 NEFIS output files (`.dat` and `.def`).
+- Extracts available variables from the `map-series` group.
+- Automatically detects grid dimensions and simulation records.
+- Preserves simulation dates and time information.
+- Exports data to NetCDF4 format.
+- Includes metadata and compression.
 
-### 2. GeoTIFF Export
-- Exports selected simulation variables as GeoTIFF files.
-- Generates geographic grids in EPSG:4326.
-- Supports spatial interpolation.
-- Uses simulation dates in output filenames.
+### 2. GeoTIFF export
+- Exports selected model variables as GeoTIFF files.
+- Uses geographic coordinates (EPSG:4326).
+- Supports further processing in GIS software such as QGIS.
 
-### 3. Time Series Extraction
-- Interactive spatial grid visualization.
-- Geographic point selection.
-- Nearest-neighbor and linear interpolation.
-- CSV export with geographic coordinates and calendar timestamps.
+### 3. Time series extraction
+- Extracts time series at user-defined geographic locations.
+- Supports nearest-neighbor and linear interpolation.
+- Exports extracted time series to CSV format.
+
+### 4. Graphical user interface
+- Simple desktop interface built with Python and Tkinter.
+- File selection and output configuration.
+- Integrated processing workflow.
+- Designed to simplify the extraction of Delft3D-WAVE results without requiring users to write Python scripts.
 
 ## Requirements
 
-- Windows 10 or later.
-- Python 3.11 or later.
-- Delft3D-WAVE 4 installation providing a compatible `nefis.dll`.
-- A matching NEFIS `.dat` and `.def` file pair.
+- Windows 10 or Windows 11 (64-bit).
+- Python 3.11 or newer (when running from source).
+- Delft3D-WAVE 4 installation with a compatible `nefis.dll`.
+- Corresponding NEFIS `.dat` and `.def` output files.
+
+**Important:** The NEFIS library is not included in this repository. Users must provide a compatible library from their Delft3D installation.
 
 ## Installation
 
-Clone the repository:
+### 1. Clone the repository
 
-```bash
+```powershell
 git clone https://github.com/darksuda/NEFIS2NetCDF.git
 cd NEFIS2NetCDF
 ```
 
-Create and activate a virtual environment:
+### 2. Create a virtual environment
 
 ```powershell
 python -m venv .venv
+```
+
+Activate it:
+
+```powershell
 .venv\Scripts\Activate.ps1
 ```
 
-Install the required dependencies:
+### 3. Install dependencies
 
 ```powershell
 python -m pip install --upgrade pip
@@ -58,47 +69,110 @@ pip install -r requirements.txt
 
 ## NEFIS Library Configuration
 
-ILAVE NEFIS Toolkit – WAVE MODULE requires `nefis.dll`, which is provided by Delft3D.
+ILAVE NEFIS Toolkit – WAVE MODULE requires a compatible `nefis.dll` library to read Delft3D-WAVE NEFIS files.
 
-**The NEFIS library is not included in this repository and is not redistributed with the application.**
+The library is provided through Delft3D installations and is not included or redistributed with this repository.
 
-The application attempts to locate the DLL automatically in common Delft3D installation directories.
+### Step 1. Locate `nefis.dll`
 
-If automatic detection fails, configure its location using one of the following environment variables.
+Find the `nefis.dll` file in your Delft3D installation directory.
 
-### Option 1: Specify the full DLL path
+Its location may vary depending on the Delft3D version and installation configuration.
+
+### Step 2. Configure the library path
+
+The application supports automatic and manual library detection.
+
+**Option A – Automatic detection**
+
+The application checks the following common Delft3D installation locations:
+
+- `%ProgramFiles%\Deltares\Delft3D\<version>\x64\dwaves\bin\nefis.dll`
+- `%ProgramFiles%\Deltares\Delft3D\<version>\x64\bin\nefis.dll`
+
+It also checks the corresponding locations under the directory specified by `DELFT3D_HOME`.
+
+Automatic detection is limited to these predefined locations.
+
+**Option B – Specify the full DLL path**
+
+If automatic detection does not locate the library, specify its full path using the `NEFIS_DLL_PATH` environment variable.
+
+In PowerShell:
 
 ```powershell
 $env:NEFIS_DLL_PATH = "C:\Path\To\nefis.dll"
 ```
 
-### Option 2: Specify the Delft3D installation directory
+Replace the example path with the actual location of your DLL.
+
+**Option C – Specify the Delft3D installation directory**
+
+Alternatively, define the Delft3D installation directory:
 
 ```powershell
-$env:DELFT3D_HOME = "C:\Program Files\Deltares\Delft3D 4.05.01"
+$env:DELFT3D_HOME = "C:\Path\To\Delft3D"
 ```
 
-These settings apply to the current PowerShell session.
+The application will check the predefined subdirectories within that directory.
+
+**Note:** Environment variables configured using `$env:` apply only to the current PowerShell session. If you open a new terminal, you must configure them again unless you add them permanently to your Windows environment variables.
+
+### Step 3. Verify compatibility
+
+Make sure that:
+
+- `nefis.dll` exists at the specified location.
+- The library is compatible with your Delft3D-WAVE installation.
+- The application and DLL use compatible architectures (64-bit).
+- Any additional DLL dependencies required by NEFIS are available.
+
+A DLL that exists but has missing dependencies or an incompatible architecture may still fail to load.
 
 ## Running the Application
 
-From the project root, activate the virtual environment and execute:
+After installing the dependencies and configuring the NEFIS library, run:
 
 ```powershell
 python main.py
 ```
 
+The graphical interface will open and allow you to select your NEFIS input files and configure the processing tasks.
+
+## Input Files
+
+The application requires the two corresponding files generated by Delft3D-WAVE 4:
+
+| Extension | Description |
+|---|---|
+| `.dat` | NEFIS data file containing simulation results. |
+| `.def` | NEFIS definition file describing the data structure. |
+
+Both files must correspond to the same simulation output.
+
+## Output Formats
+
+The application supports the following output formats:
+
+| Format | Extension | Main application |
+|---|---|---|
+| NetCDF | `.nc` | Scientific data analysis and numerical processing. |
+| GeoTIFF | `.tif` | GIS applications and spatial visualization. |
+| CSV | `.csv` | Time series analysis and tabular processing. |
+
 ## Building the Windows Application
 
-A Windows executable can be generated using the included build script.
+The project includes a batch script to generate a standalone Windows application using PyInstaller.
 
-Make sure the virtual environment and dependencies are installed, then run:
+### Build instructions
+
+Run:
 
 ```powershell
-.\build.bat
+build.bat
 ```
 
-The packaged application will be generated inside:
+The generated application will be located in:
 
 ```text
 dist/
@@ -107,68 +181,53 @@ dist/
     └── _internal/
 ```
 
-The executable requires a compatible Delft3D NEFIS library installation. The `nefis.dll` file is not bundled with the application.
+The executable can be launched without manually running `main.py` or installing the Python dependencies separately.
 
-## Input Files
-
-The application requires a matching pair of NEFIS files:
-
-```text
-simulation.dat
-simulation.def
-```
-
-Both files must have the same base filename and be located in the same directory.
-
-## Output Formats
-
-| Format | Description |
-|---|---|
-| NetCDF | Spatial and temporal simulation data, including calendar timestamps. |
-| GeoTIFF | Geographic raster outputs in EPSG:4326. |
-| CSV | Extracted time series at selected geographic locations. |
+**Important:** The generated application still requires a compatible external `nefis.dll` and its necessary dependencies. The NEFIS library is not bundled with the executable.
 
 ## Project Structure
 
 ```text
-ILAVE-NEFIS-Toolkit-WAVE/
+NEFIS2NetCDF/
+│
+├── main.py
+├── build.bat
+├── requirements.txt
+├── README.md
 │
 ├── src/
 │   ├── config.py
 │   ├── nefis_reader.py
-│   ├── netcdf_writer.py
-│   ├── converter.py
-│   ├── geographic_grid.py
-│   ├── geotiff_writer.py
-│   ├── grid_analyzer.py
-│   └── gui.py
-│
-├── tests/
+│   └── ...
 │
 ├── resources/
+│   └── ...
 │
-├── main.py
-├── requirements.txt
-├── build.bat
-├── .gitignore
-└── README.md
+└── tests/
+    └── ...
 ```
 
 ## Limitations
 
-- Designed specifically for Delft3D-WAVE 4 NEFIS outputs.
-- Requires a compatible NEFIS library installation.
-- Delft3D and `nefis.dll` are not bundled or redistributed.
-- Compatibility with other Delft3D versions has not been established.
+- Currently designed for Delft3D-WAVE 4 NEFIS output files.
+- Requires compatible `.dat` and `.def` files.
+- Requires an external compatible `nefis.dll` library.
+- Currently supports Windows only.
+- The availability of output variables depends on the contents of the input NEFIS files.
+- Large simulation datasets may require significant memory and processing time.
 
 ## License
 
-No license has been specified yet.
+No open-source license has been specified for this project.
 
-All rights reserved by default until a license is explicitly added.
+All rights are reserved by the author unless otherwise stated. The source code is publicly available for review, but redistribution, modification, or commercial use is not automatically authorized.
+
+The Delft3D NEFIS library is not included in this repository and remains subject to its respective licensing terms.
 
 ## Author
 
 **Carlo André Ilave Barboza**
+
+Oceanographic Data Processing | Numerical Modeling | Python
 
 GitHub: https://github.com/darksuda
